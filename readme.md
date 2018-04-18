@@ -73,7 +73,7 @@ objPrint.print_slice(lst_Print)
 
     
 ```
-[![](https://github.com/faustobranco/printslice/blob/master/Capture.PNG)](https://github.com/faustobranco/printslice/blob/master/Capture.PNG)
+![](Capture.PNG)
 
 ## Versioning
 ```

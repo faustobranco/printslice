@@ -14,6 +14,7 @@
 ## Description:     Initial Version
 #######################################################################################
 import sys
+import keypress
 
 int_SizeLimit = 40
 int_LineStartPrint = 20
@@ -26,20 +27,11 @@ int_Acao = -1
 lst_Print = []
 pos_Lista = 0
 
+obj_keypress = keypress.Get_Key()
+
 __version__ = '1.0.0'
 
 class printslice:
-    def _getch(self, keylen=1):
-        import sys, tty, termios
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(keylen)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-
     def __init__(self, SizeLimit=40, LineStartPrint=20):
         """
         Desc: Init class with max Size(Lines) to show the list itens and Line on screen to start print
@@ -83,38 +75,6 @@ class printslice:
             sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (int_LineStartPrint + idx + 1, 2, str_fmt.format(lst_Print[i])))
             sys.stdout.flush()
 
-    def _get(self):
-        while True:
-            char = self._getch()
-            if char == '\x03':
-                break
-            elif char in '\x1b':
-                next_char = self._getch()
-                if next_char == '[':
-                   next_char = self._getch()
-                   if next_char == 'A':                     
-                      self._print_slice(-1, lst_Print)            # Arrow Up
-                   elif next_char=='B':                     
-                      self._print_slice(1, lst_Print)             # Arrow Down
-                   elif next_char == '1':
-                        next_char = self._getch()
-                        if next_char == '~':
-                          self._print_slice(0, lst_Print, -1)   #home
-                   elif next_char == '4':
-                        next_char = self._getch()
-                        if next_char == '~':
-                           self._print_slice(0, lst_Print, 1)    #End
-                   elif next_char == '6':
-                        next_char = self._getch()
-                        if next_char == '~':
-                           self._print_slice(10, lst_Print)       #Page Down
-                   elif next_char == '5':
-                        next_char = self._getch()
-                        if next_char == '~':
-                           self._print_slice(-10, lst_Print)      #Page Up
-            else:
-                if char == '6':
-                   break
    
     def print_slice(self, lstPrint, posLista=0):
         """
@@ -125,5 +85,20 @@ class printslice:
         lst_Print = lstPrint
         pos_Lista = posLista
         self._print_slice(0, lst_Print, -1)
-        self._get()
+        result_Keypress = ''   
+        while result_Keypress <> 'Esc':
+            result_Keypress = obj_keypress.keypress()
+            if result_Keypress == 'Up':
+                self._print_slice(-1, lst_Print)
+            elif result_Keypress == 'Down':
+                self._print_slice(1, lst_Print)
+            elif result_Keypress == 'Home':
+                self._print_slice(0, lst_Print, -1)
+            elif result_Keypress == 'End':
+                self._print_slice(0, lst_Print, 1)
+            elif result_Keypress == 'Page Up':
+                self._print_slice(-10, lst_Print)
+            elif result_Keypress == 'Page Down':
+                self._print_slice(10, lst_Print)
+
 
